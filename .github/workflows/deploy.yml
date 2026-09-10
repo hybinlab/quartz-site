@@ -1,0 +1,49 @@
+name: Build and Deploy
+on:
+  push:
+    branches: [v4]
+  repository_dispatch:
+    types: [vault-updated]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout vault
+        uses: actions/checkout@v4
+        with:
+          repository: hybinlab/obsidian-vault
+          ssh-key: ${{ secrets.VAULT_DEPLOY_KEY }}
+          path: content
+
+      - name: Filter private content
+        run: |
+          rm -rf content/.obsidian content/.trash content/.git
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm i
+      - run: npx quartz build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
