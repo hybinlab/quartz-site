@@ -12,6 +12,8 @@ configuration:
     - private
     - templates
     - .obsidian
+    - 随笔/日记
+    - 年记
   theme:
     fontOrigin: googleFonts
     cdnCaching: true
