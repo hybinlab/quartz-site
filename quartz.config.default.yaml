@@ -260,7 +260,7 @@ plugins:
       outputPath: static/encryptedContentIndex.json
     order: 900
   - source: "@quartz-community/stacked-pages"
-    enabled: true
+    enabled: false
     layout:
       position: afterBody
       priority: 50
